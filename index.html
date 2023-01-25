@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>space Invaders</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body onkeydown="onKeyDown(event)" onload="onInit()">
+
+    <h1 class="score">Score: <span>0</span></h1>
+    <div>
+        <button onclick="onInit()" class="restart">Restart</button>
+    </div>
+    <button onclick="onStopAlien()" class="freeze">Freeze Aliens</button>
+
+    <div class="modal">You killed all of the Aliens and saved the world!</div>
+    <table>
+        <tbody class="container"></tbody>
+    </table>
+
+
+    <script src="js/util.js"></script>
+    <script src="js/alien.js"></script>
+    <script src="js/hero.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
