@@ -4,16 +4,17 @@ table {
     height: 300px;
     width: 300px;
     margin-left: 32%;
-    border: 2px solid rgb(245, 243, 243); 
+    border: none;
+    /* border: 2px solid rgb(245, 243, 243);  */
     /* position: absolute; */
     /* top: 500px; */
     /* left: 32%; */
   }
 td {
     padding: 4px;
-    width: 5px;
-    height: 5px;
-    border: 2px solid black;
+    width: 20px;
+    height: 20px;
+    /* border: 2px solid black; */
     text-align: center;
     transition: 0.5s;
 }

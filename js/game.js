@@ -10,9 +10,9 @@ const SKY = ''
 const ROWS = 14
 const COLS = 14
 const ALIENS_ROW_LENGTH = 8
-const ALIENS_ROW_COUNT = 1
+const ALIENS_ROW_COUNT = 3
 
-
+var gWon
 var gBoard
 var gScore
 var gFreezeInterval
@@ -26,7 +26,7 @@ function onInit() {
     gScore = 0
     gGame.aliensCount = ALIENS_ROW_LENGTH * ALIENS_ROW_COUNT
 
-    // gFreezeInterval = setInterval(moveAliens,5000)
+    // gFreezeInterval = setInterval(moveAliens,5000,gBoard)
 
     var elModal = document.querySelector('.modal')
     elModal.style.display = 'none'
@@ -41,6 +41,7 @@ function onInit() {
     createHero(gBoard)
     createAliens(gBoard)
     renderBoard(gBoard)
+    onStopAlien()
 }
 
 
@@ -51,7 +52,7 @@ function createBoard() {
         board[i] = []
         for (var j = 0; j < COLS; j++) {
             board[i][j] = createCell()
-
+            // console.log(board[i][j].location);
             if (i === (13)) {
                 board[13][j].gameObject = GROUND
             }
@@ -83,23 +84,21 @@ function renderBoard(board) {
 function createCell(gameObject = null) {
     return {
         type: SKY,
-        gameObject: gameObject
+        gameObject: gameObject,
     }
 }
 
-function updateCell(pos, gameObject = null) {
+function updateCell(pos, prevLocation = null, gameObject = null) {
 
-    if (pos.j < 0 || pos.j > gBoard.length - 1) return
-    if (gBoard[pos.i][pos.j].gameObject === ALIEN) return
+    if (pos.j < 0 || pos.j > gBoard[0].length - 1) return
+    if (prevLocation) {
+        gBoard[prevLocation.i][prevLocation.j].gameObject = '';
+        var elCell = getElCell(prevLocation);
+        elCell.innerHTML = '';
 
-    gBoard[pos.i][pos.j].gameObject = '';
-    var elCell = getElCell(pos);
-    elCell.innerHTML = '';
-
-
+    }
     gBoard[pos.i][pos.j].gameObject = gameObject;
-
-    elCell = getElCell(pos);
+    var elCell = getElCell(pos);
     elCell.innerHTML = gameObject || '';
 
     return pos
@@ -107,12 +106,19 @@ function updateCell(pos, gameObject = null) {
 
 function chackGameOver() {
 
-    if (gGame.aliensCount === 0) {
+    
+    if (gScore === (ALIENS_ROW_COUNT * ALIENS_ROW_LENGTH) * 10) {
+        gWon = true
+        elModal.innerText = 'You killed all of the Aliens and saved the world!'
+        
         var elModal = document.querySelector('.modal')
         elModal.style.display = 'block'
-
+        
         var elBtn = document.querySelector('.restart')
         elBtn.style.display = 'block'
     }
-
+    //  else {
+        // gWon = false
+        // elModal.innerText = 'You Lost! Try Again'
+    // }
 }

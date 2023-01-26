@@ -7,7 +7,7 @@
     <title>space Invaders</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body onkeydown="onKeyDown(event)" onload="onInit()">
+<body onkeyup="onKeyUp(event)" onload="onInit()">
 
     <h1 class="score">Score: <span>0</span></h1>
     <div>
@@ -15,7 +15,7 @@
     </div>
     <button onclick="onStopAlien()" class="freeze">Freeze Aliens</button>
 
-    <div class="modal">You killed all of the Aliens and saved the world!</div>
+    <div class="modal"></div>
     <table>
         <tbody class="container"></tbody>
     </table>
