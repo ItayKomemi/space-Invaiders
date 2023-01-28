@@ -16,6 +16,8 @@ var gWon
 var gBoard
 var gScore
 var gFreezeInterval
+var gIsAlienFreeze
+
 var gGame = {
     isOn: false,
     aliensCount: ALIENS_ROW_LENGTH * ALIENS_ROW_COUNT
@@ -25,8 +27,8 @@ function onInit() {
     gHero.pos = { i: 12, j: 5 }
     gScore = 0
     gGame.aliensCount = ALIENS_ROW_LENGTH * ALIENS_ROW_COUNT
-
-    // gFreezeInterval = setInterval(moveAliens,5000,gBoard)
+    gAlienLocation = []
+    gIsAlienFreeze = true
 
     var elModal = document.querySelector('.modal')
     elModal.style.display = 'none'
@@ -52,7 +54,7 @@ function createBoard() {
         board[i] = []
         for (var j = 0; j < COLS; j++) {
             board[i][j] = createCell()
-            // console.log(board[i][j].location);
+
             if (i === (13)) {
                 board[13][j].gameObject = GROUND
             }
@@ -90,13 +92,12 @@ function createCell(gameObject = null) {
 
 function updateCell(pos, prevLocation = null, gameObject = null) {
 
-    if (pos.j < 0 || pos.j > gBoard[0].length - 1) return
     if (prevLocation) {
         gBoard[prevLocation.i][prevLocation.j].gameObject = '';
         var elCell = getElCell(prevLocation);
         elCell.innerHTML = '';
-
     }
+
     gBoard[pos.i][pos.j].gameObject = gameObject;
     var elCell = getElCell(pos);
     elCell.innerHTML = gameObject || '';
@@ -104,21 +105,35 @@ function updateCell(pos, prevLocation = null, gameObject = null) {
     return pos
 }
 
+
 function chackGameOver() {
 
-    
-    if (gScore === (ALIENS_ROW_COUNT * ALIENS_ROW_LENGTH) * 10) {
+    var elModal = document.querySelector('.modal')
+    var elBtn = document.querySelector('.restart')
+
+    if (gGame.aliensCount === 0) {
         gWon = true
+
+        elModal.style.display = 'block'
         elModal.innerText = 'You killed all of the Aliens and saved the world!'
         
-        var elModal = document.querySelector('.modal')
-        elModal.style.display = 'block'
-        
-        var elBtn = document.querySelector('.restart')
         elBtn.style.display = 'block'
+        elBtn.innerText = 'Restart'
+        
+        clearInterval(gFreezeInterval)
     }
-    //  else {
-        // gWon = false
-        // elModal.innerText = 'You Lost! Try Again'
-    // }
+    else if (gAlienLocation[gAlienLocation.length - 1].i === gBoard[gBoard.length - ALIENS_ROW_COUNT].length - 2) {
+        gWon = false
+        
+        elModal.style.display = 'block'
+        elModal.innerText = 'You Lost! Try Again'
+
+        elBtn.style.display = 'block'
+        elBtn.innerText = 'Restart'
+        
+        clearInterval(gFreezeInterval)
+    }
+
+    return
+
 }

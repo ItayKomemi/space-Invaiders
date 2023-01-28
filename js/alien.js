@@ -2,8 +2,8 @@
 
 var gAliensTopRowIdx
 var gAliensBottomRowIdx
-var gIsAlienFreeze = true
 var gAlienLocation = []
+var indicator = 0
 
 function createAliens(board) {
 
@@ -11,16 +11,38 @@ function createAliens(board) {
         for (var j = 0; j < ALIENS_ROW_LENGTH; j++) {
             board[i][j].gameObject = ALIEN
             gAlienLocation.push({ i, j })
+            
         }
     }
     return board
 }
 
 function handleAlienHit(pos) {
+
     gBoard[pos.i][pos.j].gameObject = null
     updateCell(pos)
+
+    var posInIdx
+
+
+    for (var i = 0; i <= gAlienLocation.length - 1; i++) {
+        if (gAlienLocation[i].i === pos.i && gAlienLocation[i].j === pos.j) {
+            posInIdx = i
+
+            updateCell(gAlienLocation[posInIdx])
+            gAlienLocation.splice(posInIdx, 1)
+
+            
+            var alienNegs = negsCount(pos.i, pos.j)
+            console.log(alienNegs);
+
+        }
+    }
+
     gGame.aliensCount--
+
     gScore += 10
+
     chackGameOver()
 
     var elScore = document.querySelector('.score span')
@@ -28,99 +50,109 @@ function handleAlienHit(pos) {
 }
 
 function onStopAlien() {
+    var elBtn = document.querySelector('.freeze')
+
     if (gIsAlienFreeze) {
         gIsAlienFreeze = false
-        gFreezeInterval = setInterval(moveAliens, 1000, gBoard)
-        console.log('unFreeze');
+        gFreezeInterval = setInterval(moveAliens, 1000)
+        elBtn.innerText = 'Freeze Aliens'
     } else {
         gIsAlienFreeze = true
         clearInterval(gFreezeInterval)
-        console.log('freeze');
+        elBtn.innerText = 'Un Freeze Aliens'
     }
 }
 
-function moveAliens(board) {
+function moveAliens() {
+    if (!indicator) {
+        shiftBoardRight()
+    } else if (indicator === 1) {
+        shiftBoardDown()
+    } else if (indicator === 2) {
+        shiftBoardLeft()
+    }
+}
 
-    var fromI = gAlienLocation[0].i
-    var toI = gAlienLocation[gAlienLocation.length - 1].i
+function shiftBoardRight() {
 
-    shiftBoardRight(board, fromI, toI)
-    // if (gAlienLocation[0].j < gBoard[0].length - 1) {
-    // } else if (gAlienLocation[gAlienLocation.length].j > 13) {
-    // shiftBoardLeft(board, fromI, toI)
-    // }
+    var rightestIdx = { i: 0, j: 0 }
 
+    for (var j = gAlienLocation.length - 1; j >= 0; j--) {
+
+        var location = {}
+        location.i = gAlienLocation[j].i
+        location.j = gAlienLocation[j].j
+
+        gAlienLocation[j].j += 1
+
+        updateCell(gAlienLocation[j], location, ALIEN)
+
+
+        if (gAlienLocation[j].j > rightestIdx.j) {
+            rightestIdx.i = gAlienLocation[j].i
+            rightestIdx.j = gAlienLocation[j].j
+        }
+
+        // console.log(rightestIdx);
+        // console.log(gAlienLocation[rightestIdx]);
+    }
+    if (rightestIdx.j >= gBoard[0].length - 1) {
+        indicator++
+        return
+    }
 
 }
 
-function shiftBoardRight(board, fromI, toI) {
+function shiftBoardLeft() {
 
-    for (var i = fromI; i <= toI; i++) {
+    for (var j = 0; j <= gAlienLocation.length - 1; j++) {
 
-        for (var j = gAlienLocation.length - 1; j >= 0; j--) {
-            if (gAlienLocation[gAlienLocation.length - 1].j > gBoard[0].length - 1) {
-                shiftBoardDown(board, fromI, toI)
-                return
-            }
-            var location = {}
-            location.i = gAlienLocation[j].i
-            location.j = gAlienLocation[j].j
+        var location = {}
 
-            gAlienLocation[j].j++
+        location.i = gAlienLocation[j].i
+        location.j = gAlienLocation[j].j
 
-            console.log('gAlien location right',gAlienLocation[j]);
-            console.log('location right',location);
-            updateCell(gAlienLocation[j], location, ALIEN)
+        gAlienLocation[j].j--
+
+        updateCell(gAlienLocation[j], location, ALIEN)
+
+    }
+    if (gAlienLocation[0].j === 0) {
+        indicator = 0
+        return
+    }
+}
+
+function shiftBoardDown() {
+
+    for (var j = gAlienLocation.length - 1; j >= 0; j--) {
+
+        var location = {}
+
+        location.i = gAlienLocation[j].i
+        location.j = gAlienLocation[j].j
+
+        gAlienLocation[j].i++
+
+        updateCell(gAlienLocation[j], location, ALIEN)
+    }
+    indicator++
+    chackGameOver()
+    return
+}
+
+
+function negsCount(cellI, cellJ) {
+
+    var negsCount = 0
+
+    for (var i = cellI - 1; i <= cellI + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue
+        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+            if (i === cellI && j === cellJ) continue
+            if (j < 0 || j >= gBoard[i].length) continue
+            else if (gBoard[i][j].gameObject === ALIEN) negsCount++
         }
     }
+    return negsCount
 }
-
-function shiftBoardLeft(board, fromI, toI) {
-
-    for (var i = fromI; i <= toI; i++) {
-
-        for (var j = 0; j <= gAlienLocation.length - 1; j++) {
-
-            var location = {}
-            if (gAlienLocation[0].j < 0) return
-
-            location.i = gAlienLocation[j].i
-            location.j = gAlienLocation[j].j
-            gAlienLocation[j].j--
-            console.log('gAlien location left',gAlienLocation[j]);
-            console.log('location left',location);
-            updateCell(gAlienLocation[j], location, ALIEN)
-        }
-    }
-}
-
-function shiftBoardDown(board, fromI, toI) {
-
-    gAliensTopRowIdx = 1
-    gAliensBottomRowIdx = board.length - 2
-
-    for (var i = fromI; i <= toI; i++) {
-
-        for (var j = gAlienLocation.length - 1; j >= 0; j--) {
-
-            var location = {}
-
-            if (gAlienLocation[j].i === gAliensBottomRowIdx) {
-                chackGameOver()
-            }else{
-                shiftBoardLeft(board, fromI, toI)
-            }
-
-            location.i = gAlienLocation[j].i
-            location.j = gAlienLocation[j].j
-
-            gAlienLocation[j].i++
-
-            console.log('gAlien location down',gAlienLocation[j]);
-            console.log('location down',location);
-
-            updateCell(gAlienLocation[j], location, ALIEN)
-        }
-    }
-}
-

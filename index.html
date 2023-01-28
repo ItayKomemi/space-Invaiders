@@ -7,11 +7,11 @@
     <title>space Invaders</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body onkeyup="onKeyUp(event)" onload="onInit()">
+<body onkeyup="onKeyUp(event)">
 
     <h1 class="score">Score: <span>0</span></h1>
     <div>
-        <button onclick="onInit()" class="restart">Restart</button>
+        <button onclick="onInit()" class="restart">Start</button>
     </div>
     <button onclick="onStopAlien()" class="freeze">Freeze Aliens</button>
 
@@ -22,8 +22,9 @@
 
 
     <script src="js/util.js"></script>
-    <script src="js/alien.js"></script>
     <script src="js/hero.js"></script>
+    <script src="js/alien.js"></script>
     <script src="js/game.js"></script>
+    
 </body>
 </html>
