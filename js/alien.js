@@ -33,17 +33,17 @@ function handleAlienHit(pos) {
             gAlienLocation.splice(posInIdx, 1)
 
             
-            var alienNegs = negsCount(pos.i, pos.j)
-            console.log(alienNegs);
+            // var alienNegs = negsCount(pos.i, pos.j)
+            // console.log(alienNegs);
+            gGame.aliensCount--
+        
+            gScore += 10
+        
+            chackGameOver()
 
         }
     }
 
-    gGame.aliensCount--
-
-    gScore += 10
-
-    chackGameOver()
 
     var elScore = document.querySelector('.score span')
     elScore.innerText = gScore
